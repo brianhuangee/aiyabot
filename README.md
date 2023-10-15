@@ -130,3 +130,7 @@ These people played a large role in AIYA's development in some way:
 - gingivere0, for PayloadFormatter class for the original API. Without that, I'd have given up from the start. Also has a great Discord bot as a no-slash-command alternative.
   - https://github.com/gingivere0/dalebot
 - You, for using AIYA and contributing with PRs, bug reports, feedback, and more!
+
+## TODOs
+- get message after posting for generate,identify,upscale,stable cog
+- change menus to buttons (U1 -> U4), (V1 -> V4), reroll, mod prompt, see details, delete

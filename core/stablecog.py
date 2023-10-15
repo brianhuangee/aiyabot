@@ -234,9 +234,9 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
         prompt = settings.extra_net_defaults(prompt, channel)
 
         if data_model != '':
-            print(f'Request -- {ctx.author.name}#{ctx.author.discriminator} -- Prompt: {prompt}')
+            print(f'Request -- {ctx.author.name}#{ctx.author.discriminator} -- Prompt: {prompt} -- Negative Prompt: {negative_prompt}')
         else:
-            print(f'Request -- {ctx.author.name}#{ctx.author.discriminator} -- Prompt: {prompt} -- Using model: {data_model}')
+            print(f'Request -- {ctx.author.name}#{ctx.author.discriminator} -- Prompt: {prompt} -- Negative Prompt: {negative_prompt} -- Using model: {data_model}')
 
         if seed == -1:
             seed = random.randint(0, 0xFFFFFFFF)
@@ -384,11 +384,17 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
             }
 
             # update payload if init_img or init_url is used
-            if queue_object.init_image is not None:
-                image = base64.b64encode(requests.get(queue_object.init_image.url, stream=True).content).decode('utf-8')
+            if queue_object.init_image:
+                image = None
+                if isinstance(queue_object.init_image, discord.Attachment) and queue_object.init_image.url is not None:
+                    image = base64.b64encode(requests.get(queue_object.init_image.url, stream=True).content)
+                else:
+                    image_byte_array = io.BytesIO()
+                    queue_object.init_image.save(image_byte_array, format = queue_object.init_image.format)
+                    image = base64.b64encode(image_byte_array.getvalue())
                 img_payload = {
                     "init_images": [
-                        'data:image/png;base64,' + image
+                        'data:image/png;base64,' + image.decode('utf-8')
                     ],
                     "denoising_strength": queue_object.strength
                 }
@@ -399,8 +405,8 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
                 highres_payload = {
                     "enable_hr": True,
                     "hr_upscaler": queue_object.highres_fix,
-                    "hr_scale": 1,
-                    "hr_second_pass_steps": int(queue_object.steps)/2,
+                    "hr_scale": 2,
+                    "hr_second_pass_steps": 36,
                     "denoising_strength": queue_object.strength
                 }
                 payload.update(highres_payload)
@@ -520,7 +526,7 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
             content = f'> for {queue_object.ctx.author.name}'
             noun_descriptor = "drawing" if image_count == 1 else f'{image_count} drawings'
             draw_time = '{0:.3f}'.format(end_time - start_time)
-            message = f'my {noun_descriptor} of ``{queue_object.simple_prompt}`` took me ``{draw_time}`` seconds!'
+            message = f'my {noun_descriptor} of ``{queue_object.simple_prompt}`` with ``{queue_object.data_model} took me ``{draw_time}`` seconds!'
 
             view = queue_object.view
 
