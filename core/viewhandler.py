@@ -313,10 +313,10 @@ class DrawView(View):
             if batch_count > 1:
                 download_menu = DownloadMenu(input_tuple[19], input_tuple[10], batch_count, input_tuple)
                 download_menu.callback = download_menu.callback
-                #self.add_item(download_menu)
+                self.add_item(download_menu)
                 upscale_menu = UpscaleMenu(input_tuple[19], input_tuple[10], batch_count, input_tuple)
                 upscale_menu.callback = upscale_menu.callback
-                #self.add_item(upscale_menu)
+                self.add_item(upscale_menu)
                 reroll_menu = Img2ImgMenu(input_tuple[19], input_tuple[10], batch_count, input_tuple)
                 reroll_menu.callback = reroll_menu.callback
                 self.add_item(reroll_menu)
@@ -457,7 +457,7 @@ class DrawView(View):
         init_url = None
         try:
             attachment = self.message.attachments[0]
-            if self.input_tuple[12]:
+            if self.input_tuple[12] and isinstance(self.input_tuple[12], discord.Attachment):
                 init_url = self.input_tuple[12].url
             embed = await ctxmenuhandler.parse_image_info(init_url, attachment.url, "button")
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -516,7 +516,7 @@ class DownloadMenu(discord.ui.Select):
         filename = [f"{epoch_time}-{seed}-{i}.png" for i in range(1, batch_count+1)]
         input_options = [(f, str(i)) for i, f in enumerate(filename, start=1)]
         options = [discord.SelectOption(label=option[1], value=option[0], description=option[0]) for option in input_options]
-        super().__init__(custom_id="download_menu", placeholder='💾 Choose images to download...', min_values=1, max_values=max_values, options=options)
+        super().__init__(custom_id="download_menu", placeholder='💾 Choose image to download...', min_values=1, max_values=max_values, options=options)
     
     async def callback(self, interaction: discord.Interaction):
         try: 
@@ -552,7 +552,7 @@ class UpscaleMenu(discord.ui.Select):
         filename = [f"{epoch_time}-{seed}-{i}.png" for i in range(1, batch_count+1)]
         input_options = [(f, str(i)) for i, f in enumerate(filename, start=1)]
         options = [discord.SelectOption(label=option[1], value=option[0], description=option[0]) for option in input_options]
-        super().__init__(custom_id="upscale_menu", placeholder='⬆️ Choose images to upscale...', min_values=1, max_values=1, options=options)
+        super().__init__(custom_id="upscale_menu", placeholder='⬆️ Choose image to upscale...', min_values=1, max_values=1, options=options)
     
     async def callback(self, interaction: discord.Interaction):
         try: 
@@ -603,7 +603,7 @@ class Img2ImgMenu(discord.ui.Select):
         filename = [f"{epoch_time}-{seed}-{i}.png" for i in range(1, batch_count+1)]
         input_options = [(f, str(i)) for i, f in enumerate(filename, start=1)]
         options = [discord.SelectOption(label=option[1], value=option[0], description=option[0]) for option in input_options]
-        super().__init__(custom_id="upscale_menu", placeholder='🖼️ Choose images to reroll...', min_values=1, max_values=1, options=options)
+        super().__init__(custom_id="reroll_menu", placeholder='🖼️ Choose image to reroll...', min_values=1, max_values=1, options=options)
     
     async def callback(self, interaction: discord.Interaction):
         try: 

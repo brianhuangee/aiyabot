@@ -44,10 +44,12 @@ async def parse_image_info(ctx, image_url, command):
     message = ''
     try:
         # construct a payload
-        image = base64.b64encode(requests.get(image_url, stream=True).content).decode('utf-8')
-        payload = {
-            "image": 'data:image/png;base64,' + image
-        }
+        payload = {}
+
+        if image_url:
+            image = base64.b64encode(requests.get(image_url, stream=True).content).decode('utf-8')
+            payload["image"] = 'data:image/png;base64,' + image
+
         # send normal payload to webui
         s = settings.authenticate_user()
         png_response = s.post(url=f'{settings.global_var.url}/sdapi/v1/png-info', json=payload)
@@ -139,7 +141,7 @@ async def parse_image_info(ctx, image_url, command):
 
         # create embed and give the best effort in trying to parse the png info
         embed = discord.Embed(title="About the image!", description="")
-        if not has_init_url:  # for some reason this bugs out the embed
+        if not has_init_url and image_url:  # for some reason this bugs out the embed
             embed.set_thumbnail(url=image_url)
         if len(prompt_field) > 1024:
             prompt_field = f'{prompt_field[:1010]}....'

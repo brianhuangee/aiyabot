@@ -80,14 +80,14 @@ class PostObject:
 # any command that needs to wait on processing should use the dream thread
 class GlobalQueue:
     dream_thread = Thread()
-    post_event_loop = asyncio.get_event_loop()
+    event_loop = asyncio.get_event_loop()
     queue: list[DrawObject | UpscaleObject | IdentifyObject] = []
     # new generate queue and thread
     generate_queue: list[GenerateObject] = []
     generate_thread = Thread()
     
     post_thread = Thread()
-    event_loop = asyncio.get_event_loop()
+    post_event_loop = asyncio.get_event_loop()
     post_queue: list[PostObject] = []
     
     def get_queue_sizes():

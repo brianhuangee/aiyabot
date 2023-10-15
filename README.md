@@ -132,5 +132,4 @@ These people played a large role in AIYA's development in some way:
 - You, for using AIYA and contributing with PRs, bug reports, feedback, and more!
 
 ## TODOs
-- get message after posting for generate,identify,upscale,stable cog
-- change menus to buttons (U1 -> U4), (V1 -> V4), reroll, mod prompt, see details, delete
+- support more options/extensions? (VAE, animateddiff?)
