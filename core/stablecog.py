@@ -405,8 +405,8 @@ class StableCog(commands.Cog, name='Stable Diffusion', description='Create image
                 highres_payload = {
                     "enable_hr": True,
                     "hr_upscaler": queue_object.highres_fix,
-                    "hr_scale": 2,
-                    "hr_second_pass_steps": 36,
+                    "hr_scale": 1,
+                    "hr_second_pass_steps": int(queue_object.steps/1.5),
                     "denoising_strength": queue_object.strength
                 }
                 payload.update(highres_payload)
